@@ -36,3 +36,48 @@
     transform: rotate(360deg);
   }
 }
+
+
+
+.row:after {
+  clear: both;
+  content: "";
+  display: table;
+}
+
+.status {
+  margin-bottom: 10px;
+}
+
+.box {
+  background: #fff;
+  border: 1px solid #999;
+  float: left;
+  font-size: 40px;
+  font-weight: bold;
+  line-height: 34px;
+  height: 100px;
+  margin-right: -1px;
+  margin-top: -1px;
+  padding: 0;
+  text-align: center;
+  width: 100px;
+  cursor: pointer;
+}
+
+.box:focus {
+  outline: none;
+}
+/* 
+.kbd-navigation .box:focus {
+  background: #ddd;
+}
+
+.game {
+  display: flex;
+  flex-direction: row;
+} */
+
+.game-info {
+  margin: 5px 5px 20px;
+}
