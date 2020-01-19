@@ -39,6 +39,7 @@
 
 
 
+
 .row:after {
   clear: both;
   content: "";
@@ -64,9 +65,11 @@
   width: 100px;
   cursor: pointer;
 }
-
 .box:focus {
   outline: none;
+}
+.cur-def-div>.box {
+  cursor: default !important;
 }
 /* 
 .kbd-navigation .box:focus {
@@ -80,4 +83,19 @@
 
 .game-info {
   margin: 5px 5px 20px;
+}
+
+.winner-box {
+  background-color: aqua;
+}
+.scoreboard {
+  position: absolute;
+  right: 1%;
+  top: 22.75%;
+}
+.score-title {
+  text-align: left;
+}
+.m-l-15 {
+  margin-left: 15px;
 }

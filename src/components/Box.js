@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 class Box extends React.Component {
 
@@ -9,14 +9,14 @@ class Box extends React.Component {
         }
     }
     handleClick() {
-        console.log('Box is clicked')
         this.props.onClick && this.props.onClick()
     }
 
     render() {
+        const { value, boxIndex } = this.props
         return (
-            <button className="box" onClick={this.handleClick.bind(this)} >
-                {this.props.value}
+            <button id={boxIndex} className="box" onClick={this.handleClick.bind(this)} >
+                { value }
             </button>
         )
     }
