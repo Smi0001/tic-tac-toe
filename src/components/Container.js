@@ -86,7 +86,7 @@ class Container extends React.Component {
     render() {
         const { currentPlayer, playerX, playerO, isGameOver } = this.state
         return (
-            <div>
+            <div className="">
                 <div className="container">
                     <button onClick={this.resetGame.bind(this)}>Reset Game</button>
                     <div className="row" >
