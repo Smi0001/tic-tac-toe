@@ -1,5 +1,5 @@
 # tic-tac-toe
-Tic Tac Toe game developed in ReactJS
+Tic Tac Toe game developed in ReactJS. Deployed at https://shammi-tictactoe.herokuapp.com/
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
