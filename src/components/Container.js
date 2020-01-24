@@ -76,22 +76,26 @@ class Container extends React.Component {
         )
     }
     renderGrid() {
-        const { boxArray, isGameOver } = this.state
+        const { boxArray, isGameOver, winnerBoxArray } = this.state
         const grid = []
         for (let boxIndex = 0; boxIndex < 9; boxIndex++) {
+            let overridingClass = winnerBoxArray.includes(boxIndex) ? WINNER_CLASS + " " : ''
+            overridingClass += isGameOver ? DEFAULT_POINTER_CLASS + " " : ''
             grid.push(
                 <Box
-                        boxIndex={ boxIndex }
-                        value={ boxArray[boxIndex] }
-                        onClick={ isGameOver ? null : this.boxClick.bind(this, boxIndex) }
-                    />
+                    key={ boxIndex }
+                    overridingClass={ overridingClass }
+                    boxIndex={ boxIndex }
+                    value={ boxArray[boxIndex] }
+                    onClick={ isGameOver ? null : this.boxClick.bind(this, boxIndex) }
+                />
             )
         }
         return grid
     }
 
     render() {
-        const { currentPlayer, playerX, playerO, isGameOver } = this.state
+        const { currentPlayer, playerX, playerO } = this.state
         return (
             <div className="row">
                 <div>
@@ -101,10 +105,10 @@ class Container extends React.Component {
                     <div className="game-info">
                         <span>Current Player: </span>
                         <strong>{ currentPlayer }</strong>
-                        <img src={reloadIcon} className="reset-icon m-l-15pcnt" onClick={this.reloadGame.bind(this)} />
+                        <img alt="Reload" src={reloadIcon} className="reset-icon m-l-15pcnt" onClick={this.reloadGame.bind(this)} />
                     </div>
                 </div>
-                <div className={"container container-3-col " + (isGameOver ? DEFAULT_POINTER_CLASS : "")}>
+                <div className={"container container-3-col"}>
                     { this.renderGrid() }
                 </div>
             </div>

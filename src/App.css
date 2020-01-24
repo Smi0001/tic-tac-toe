@@ -69,7 +69,10 @@
 .box:active {
   background: aquamarine;
 }
-.cur-def-div>.box {
+.score-box .box:active {
+  background: white;
+}
+.cur-def {
   cursor: default !important;
 }
 .game-info {
