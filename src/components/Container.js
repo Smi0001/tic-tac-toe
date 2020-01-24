@@ -2,6 +2,7 @@ import React from 'react'
 import Box from './Box'
 import Scoreboard from './Scoreboard'
 import { TEXT_CONSTANTS, matrix, winnerBoxes } from '../constants/constants'
+import reloadIcon from '../assets/reload.svg'
 const { X_TEXT, O_TEXT, WINNER_CLASS, PLAYER_X, PLAYER_O, DEFAULT_POINTER_CLASS } = TEXT_CONSTANTS
 
 class Container extends React.Component {
@@ -23,7 +24,7 @@ class Container extends React.Component {
             isReset ? boxElement.classList.remove(WINNER_CLASS) : boxElement.classList.add(WINNER_CLASS)
         }
     }
-    resetGame() {
+    reloadGame() {
         // commenting as this triggers Scoreboard.UNSAFE_componentWillReceiveProps() and affects score
         // this.colorBox(
         //     this.state.winnerBoxArray,
@@ -74,42 +75,37 @@ class Container extends React.Component {
             this.checkGameOver()
         )
     }
-    renderBox(boxIndex) {
+    renderGrid() {
         const { boxArray, isGameOver } = this.state
-        return <Box
-                    boxIndex={ boxIndex }
-                    value={ boxArray[boxIndex] }
-                    onClick={ isGameOver ? null : this.boxClick.bind(this, boxIndex) }
-                />
+        const grid = []
+        for (let boxIndex = 0; boxIndex < 9; boxIndex++) {
+            grid.push(
+                <Box
+                        boxIndex={ boxIndex }
+                        value={ boxArray[boxIndex] }
+                        onClick={ isGameOver ? null : this.boxClick.bind(this, boxIndex) }
+                    />
+            )
+        }
+        return grid
     }
 
     render() {
         const { currentPlayer, playerX, playerO, isGameOver } = this.state
         return (
-            <div className="">
-                <div className="container">
-                    <button onClick={this.resetGame.bind(this)}>Reset Game</button>
-                    <div className="row" >
-                        <div className="game-info">Current Player: <strong>{ currentPlayer }</strong> </div>
+            <div className="row">
+                <div>
+                    <div className="scoreboard">
+                            <Scoreboard scoreX={ playerX } scoreO={ playerO } />
                     </div>
-                    <div className={`row ${isGameOver ? DEFAULT_POINTER_CLASS : ''} `}>
-                        { this.renderBox(0) }
-                        { this.renderBox(1) }
-                        { this.renderBox(2) }
-                    </div>
-                    <div className={`row ${isGameOver ? DEFAULT_POINTER_CLASS : ''} `}>
-                        { this.renderBox(3) }
-                        { this.renderBox(4) }
-                        { this.renderBox(5) }
-                    </div>
-                    <div className={`row ${isGameOver ? DEFAULT_POINTER_CLASS : ''} `}>
-                        { this.renderBox(6) }
-                        { this.renderBox(7) }
-                        { this.renderBox(8) }
+                    <div className="game-info">
+                        <span>Current Player: </span>
+                        <strong>{ currentPlayer }</strong>
+                        <img src={reloadIcon} className="reset-icon m-l-15pcnt" onClick={this.reloadGame.bind(this)} />
                     </div>
                 </div>
-                <div className="scoreboard">
-                    <Scoreboard scoreX={ playerX } scoreO={ playerO } />
+                <div className={"container container-3-col " + (isGameOver ? DEFAULT_POINTER_CLASS : "")}>
+                    { this.renderGrid() }
                 </div>
             </div>
         )

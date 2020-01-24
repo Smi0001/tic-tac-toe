@@ -1,12 +1,13 @@
+* {
+  box-sizing: border-box;
+}
 .App {
   text-align: center;
 }
-
 .App-logo {
   height: 40vmin;
   pointer-events: none;
 }
-
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
@@ -23,11 +24,9 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
-
 .App-link {
   color: #61dafb;
 }
-
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -37,19 +36,18 @@
   }
 }
 
-
-
-
+.container {
+  display: grid;
+  grid-template-rows: 100px 100px;
+}
+.container-3-col {
+  grid-template-columns: 1fr 1fr 1fr;
+}
 .row:after {
   clear: both;
   content: "";
   display: table;
 }
-
-.status {
-  margin-bottom: 10px;
-}
-
 .box {
   background: #fff;
   border: 1px solid #999;
@@ -68,34 +66,36 @@
 .box:focus {
   outline: none;
 }
+.box:active {
+  background: aquamarine;
+}
 .cur-def-div>.box {
   cursor: default !important;
 }
-/* 
-.kbd-navigation .box:focus {
-  background: #ddd;
-}
-
-.game {
-  display: flex;
-  flex-direction: row;
-} */
-
 .game-info {
   margin: 5px 5px 20px;
+  text-align: left;
 }
-
 .winner-box {
   background-color: aqua;
 }
 .scoreboard {
-  position: absolute;
-  right: 1%;
-  top: 22.75%;
-}
-.score-title {
   text-align: left;
+  margin: 0 0 30px 0;
 }
 .m-l-15 {
   margin-left: 15px;
+}
+.reset-icon {
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  margin: 0 10px;
+}
+.reset-icon.m-l-15pcnt {
+  margin-left: 10%;
+}
+.score-box {
+  justify-content: center;
+  display: inline-block;
 }
