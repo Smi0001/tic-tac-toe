@@ -13,9 +13,9 @@ class Box extends React.Component {
     }
 
     render() {
-        const { value, boxIndex } = this.props
+        const { value, boxIndex, overridingClass } = this.props
         return (
-            <button id={boxIndex} className="box" onClick={this.handleClick.bind(this)} >
+            <button key={boxIndex} id={boxIndex} className={"box " + (overridingClass ? overridingClass : "")} onClick={this.handleClick.bind(this)} >
                 { value }
             </button>
         )
