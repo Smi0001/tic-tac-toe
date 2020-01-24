@@ -1,6 +1,7 @@
 import React from 'react'
 import Box from './Box'
 import { TEXT_CONSTANTS } from '../constants/constants'
+import refreshIcon from '../assets/recycle.svg'
 
 const { GAME_TIC_TAC_TOE, PLAYER_X, PLAYER_O } = TEXT_CONSTANTS
 const getScores = function() {
@@ -61,17 +62,15 @@ class Scoreboard extends React.Component {
     }
     render() {
         return (
-            <div >
-                <button onClick={this.resetScore.bind(this)}>Reset Game &amp; Score</button>
-                <div className="row game-info">
-                    <div className="score-title">
-                        <span className="">Player X</span>
-                        <span className="m-l-15">Player O</span>
-                    </div>
+            <div className="row">
+                <div className="game-info">
+                    <span className="">Player X</span>
+                    <span className="m-l-15">Player O</span>
                 </div>
-                <div className="row">
+                <div className="score-box">
                     <Box value={ this.state[PLAYER_X] } />
                     <Box value={ this.state[PLAYER_O] } />
+                    <img src={refreshIcon} className="reset-icon" onClick={this.resetScore.bind(this)} title="Reset Game" />
                 </div>
             </div>
         )
