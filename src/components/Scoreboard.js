@@ -40,7 +40,6 @@ class Scoreboard extends React.Component {
         if (scoreX || scoreO) {
             // get score from session and set back to session
             const scoreObj = getScores()
-            console.log(scoreObj)
             var scores = {}
             scores[PLAYER_X] = scoreObj[PLAYER_X] + (scoreX ? Number(scoreX) : 0)
             scores[PLAYER_O] = scoreObj[PLAYER_O] + (scoreO ? Number(scoreO) : 0)
