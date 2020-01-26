@@ -51,7 +51,7 @@ class Container extends React.Component {
         window.location.reload()
     }
     declareWinner(winnerBoxIndex, winnerBoxArray) {
-        const { playerX, playerO, boxArray, availableBoxCounter } = this.state
+        const { playerX, playerO, boxArray } = this.state
         let winner = {}
         if (boxArray[winnerBoxIndex] === X_TEXT) {
             winner = { [PLAYER_X]: playerX + 1 }
@@ -78,7 +78,6 @@ class Container extends React.Component {
             }
         }
         // when no available box is available this snippet executes only when declareWinner() is not called
-        console.log('checkGameOver', availableBoxCounter)
         if (availableBoxCounter === 0) { 
             this.setState({
                 isGameOver: true,
@@ -86,7 +85,7 @@ class Container extends React.Component {
             })
             this.colorBox(winnerBoxes[0])
             this.colorBox(winnerBoxes[1])
-            this.colorBox(winnerBoxes[1])
+            this.colorBox(winnerBoxes[2])
         }
     }
     boxClick(boxIndex) {

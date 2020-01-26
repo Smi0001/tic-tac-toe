@@ -8,7 +8,7 @@ const PLAYER_X = 'playerX'
 const PLAYER_O = 'playerO'
 const WINNER_TEXT = 'Winner: '
 const CURRENT_PLAYER_TEXT = 'Current Player: '
-const MATCH_DRAW_TEXT = 'Match draws!'
+const MATCH_DRAW_TEXT = 'Match is draw!'
 export const matrix = [
     null, null, null,
     null, null, null,
