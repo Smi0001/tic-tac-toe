@@ -30,25 +30,30 @@ class Container extends React.Component {
         }
     }
 
+    addRemoveClass( elementId, className, isAdd) {
+        var boxElement = document.getElementById( elementId )
+        isAdd ? boxElement.classList.add(className) : boxElement.classList.remove(className)
+    }
     colorBox(winnerBoxArray, isReset) {
         for (var boxIndex = 0; boxIndex < winnerBoxArray.length; boxIndex++) {
-            var boxElement = document.getElementById( winnerBoxArray[boxIndex] )
-            isReset ? boxElement.classList.remove(WINNER_CLASS) : boxElement.classList.add(WINNER_CLASS)
+            this.addRemoveClass(winnerBoxArray[boxIndex], WINNER_CLASS, !isReset)
         }
     }
     reloadGame() {
+        this.addRemoveClass('reset-btn', 'animated', true)
         // commenting as this triggers Scoreboard.UNSAFE_componentWillReceiveProps() and affects score
         // this.colorBox(
         //     this.state.winnerBoxArray,
         //     true
         // )
         // this.setState({
-        //     isGameOver: false,
-        //     currentPlayer: X_TEXT,
-        //     boxArray: matrix.slice(),
-        //     winnerBoxArray: [],
-        // })
+            //     isGameOver: false,
+            //     currentPlayer: X_TEXT,
+            //     boxArray: matrix.slice(),
+            //     winnerBoxArray: [],
+            // })
         window.location.reload()
+        this.addRemoveClass('reset-btn', 'animated', false)
     }
     declareWinner(winnerBoxIndex, winnerBoxArray) {
         const { playerX, playerO, boxArray } = this.state
@@ -128,7 +133,7 @@ class Container extends React.Component {
             <div className="row">
                 <div>
                     <div className="scoreboard">
-                            <Scoreboard scoreX={ playerX } scoreO={ playerO } />
+                            <Scoreboard scores={ {playerX, playerO} } />
                     </div>
                     <div className="game-info">
                         {
@@ -136,7 +141,7 @@ class Container extends React.Component {
                         ?   <strong>{ info }</strong>
                         :   <strong>{ CURRENT_PLAYER_TEXT + currentPlayer }</strong>
                         }
-                        <img alt="Reload" src={reloadIcon} className="reset-icon m-l-15pcnt" onClick={this.reloadGame.bind(this)} />
+                        <img id="reset-btn" alt="Reload" src={reloadIcon} className="reset-icon m-l-15pcnt" onClick={this.reloadGame.bind(this)} />
                     </div>
                 </div>
                 <div className={"container container-3-col"}>
