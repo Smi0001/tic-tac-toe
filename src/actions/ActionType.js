@@ -1,3 +1,4 @@
-export const BOX_CLICK = 'BOX_CLICK';
-export const DECLARE_WINNER = 'DECLARE_WINNER';
-export const CHECK_GAME_OVER = 'CHECK_GAME_OVER';
+export const BOX_CLICK = 'BOX_CLICK'
+export const DECLARE_WINNER = 'DECLARE_WINNER'
+export const CHECK_GAME_OVER = 'CHECK_GAME_OVER'
+export const SET_GAME_OVER = 'SET_GAME_OVER'

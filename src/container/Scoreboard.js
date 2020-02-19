@@ -25,6 +25,7 @@ class Scoreboard extends React.Component {
     componentDidMount() {
         this.setScoreFromStorage()
     }
+
     setScoreFromStorage() {
         const scoreObj = getScores()
         if(scoreObj) {

@@ -1,76 +1,27 @@
 import React from 'react'
 import { connect } from 'react-redux';
 import store from '../reduxStore'
-import { bindActionCreators } from 'redux';
-import { AppActions } from '../actions/index';
+import { AppActions, checkGameOver } from '../actions/index';
 import Box from './Box'
 import Scoreboard from './Scoreboard'
-import { TEXT_CONSTANTS, matrix } from '../constants/constants'
+import { TEXT_CONSTANTS } from '../constants/constants'
 import reloadIcon from '../assets/reload.svg'
 import { UTILS } from '../utils/common-utils';
 const {
-    X_TEXT,
     WINNER_CLASS,
-    // PLAYER_X,
-    // PLAYER_O,
     DEFAULT_POINTER_CLASS,
     CURRENT_PLAYER_TEXT,
-    // WINNER_TEXT,
-    // MATCH_DRAW_TEXT,
 } = TEXT_CONSTANTS
-const STORE= [store]
 
-function getCurrentStateFromStore() {
-    let reduxStore = store.getState().reducers
-    console.log('getCurrentStateFromStore', reduxStore)
-    return {
-        boxArray: reduxStore.boxArray,
-        currentPlayer: reduxStore.currentPlayer,
-        availableBoxCounter: reduxStore.availableBoxCounter,
-        playerX: reduxStore.playerX,
-        playerO: reduxStore.playerO,
-        winnerBoxArray: reduxStore.winnerBoxArray,
-        info: reduxStore.info,
-    }
-}
 
 class Container extends React.Component {
-    // state = this.getCurrentStateFromStore()
   
-    constructor(props) {
-        super(props, {
-            store: STORE,
-            getCurrentStateFromStore: getCurrentStateFromStore,
-        })
-        this.state = {
-            boxArray: matrix.slice(),
-            currentPlayer: X_TEXT,
-            playerX: 0,
-            playerO: 0,
-            winnerBoxArray:[],
-            info: CURRENT_PLAYER_TEXT,
-            availableBoxCounter: 9,
-        }
-    }
-
-    updateStateFromStore = () => {
-        const currentState = getCurrentStateFromStore();
-        
-        if (this.state !== currentState) {
-            console.log('updateStateFromStore', this.state, currentState)
-            this.setState(currentState);
-        }
-    }
     componentDidMount() {
-        this.unsubscribeStore = store.subscribe(this.updateStateFromStore);
-    }
-      
-    componentWillUnmount() {
-        this.unsubscribeStore();
+        // this.unsubscribeStore = store.subscribe(this.updateStateFromStore);
     }
 
     reloadGame() {
-        this.addRemoveClass('reset-btn', 'animated', true)
+        UTILS.addRemoveClass('reset-btn', 'animated', true)
         // commenting as this triggers Scoreboard.UNSAFE_componentWillReceiveProps() and affects score
         // UTILS.colorBox(
         //     this.state.winnerBoxArray,
@@ -83,32 +34,20 @@ class Container extends React.Component {
             //     winnerBoxArray: [],
             // })
         window.location.reload()
-        this.addRemoveClass('reset-btn', 'animated', false)
+        UTILS.addRemoveClass('reset-btn', 'animated', false)
     }
-    callDeclareWinnerFn(winnerBoxIndex, winnerBoxArray) {
-        UTILS.colorBox(winnerBoxArray, false)
-        this.props.dispatch(
-            AppActions.declareWinner({
-                winnerBoxIndex,
-                winnerBoxArray,
-            })
-        );
-    }
-    callCheckGameOver() {
-        this.props.dispatch(
-            AppActions.checkGameOver()
-        )
-        console.log('callCheckGameOver', this.state)
-        
-    }
+
     callBoxClickFn(boxIndex) {
-        this.props.dispatch(
-            AppActions.boxClick(boxIndex)
+        store.dispatch(
+            (dispatch, getState) => {
+                dispatch(AppActions.boxClick(boxIndex))
+                checkGameOver(dispatch, getState)
+            }
         )
-        this.callCheckGameOver()
     }
+
     renderGrid() {
-        const { boxArray, isGameOver, winnerBoxArray } = this.state
+        const { boxArray, isGameOver, winnerBoxArray } = this.props
         const grid = []
         for (let boxIndex = 0; boxIndex < 9; boxIndex++) {
             let alreadyClicked = boxArray[boxIndex] !== null
@@ -128,14 +67,13 @@ class Container extends React.Component {
                         : this.callBoxClickFn.bind(this, boxIndex)
                     }
                 />
-                    // disabledProp={ isGameOver ? true : null }
             )
         }
         return grid
     }
 
     render() {
-        const { currentPlayer, playerX, playerO, info, isGameOver } = this.state
+        const { currentPlayer, playerX, playerO, info, isGameOver } = this.props
         return (
             <div className="row">
                 <div>
@@ -159,23 +97,33 @@ class Container extends React.Component {
     }
 }
 
-// export default Container
-// function mapStateToProps(state){
-//     console.log('state/dispatch', state, 'connect', connect)
-//     return {
-//         boxArray: state.boxArray,
-//         currentPlayer: state.currentPlayer,
-//         availableBoxCounter: state.availableBoxCounter,
-//     };
-// }
-
-function mapDispatchToProps(dispatch) {
+function mapStateToProps(state){
     return {
-        actions: {
-            boxClick: bindActionCreators(AppActions.boxClick, dispatch),
-            checkGameOver: bindActionCreators(AppActions.checkGameOver, dispatch),
-            declareWinner: bindActionCreators(AppActions.declareWinner, dispatch),
-        }
+        boxArray: state.reducerState.boxArray,
+        currentPlayer: state.reducerState.currentPlayer,
+        availableBoxCounter: state.reducerState.availableBoxCounter,
+        winnerBoxArray: state.reducerState.winnerBoxArray,
+        info: state.reducerState.info,
+        isGameOver: state.reducerState.isGameOver,
+        playerO: state.reducerState.playerO,
+        playerX: state.reducerState.playerX,
+    };
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        boxClick: boxIndex => {
+            dispatch(AppActions.boxClick(boxIndex))
+        },
+        setGameOver: (isTrue, text) =>{
+            dispatch(AppActions.setGameOver(isTrue, text))
+        },
+        declareWinner: (winnerBoxIndex, winnerBoxArray) => {
+            dispatch(AppActions.declareWinner(winnerBoxIndex, winnerBoxArray))
+        },
+        checkGameOver: (newState) => {
+            dispatch(AppActions.checkGameOver(newState))
+        },
     }
 }
-export default connect( mapDispatchToProps )(Container)
+export default connect(mapStateToProps, mapDispatchToProps )(Container)
