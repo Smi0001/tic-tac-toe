@@ -3,7 +3,17 @@ import Box from './Box'
 import Scoreboard from './Scoreboard'
 import { TEXT_CONSTANTS, matrix, winnerBoxes } from '../constants/constants'
 import reloadIcon from '../assets/reload.svg'
-const { X_TEXT, O_TEXT, WINNER_CLASS, PLAYER_X, PLAYER_O, DEFAULT_POINTER_CLASS } = TEXT_CONSTANTS
+const {
+    X_TEXT,
+    O_TEXT,
+    WINNER_CLASS,
+    PLAYER_X,
+    PLAYER_O,
+    DEFAULT_POINTER_CLASS,
+    CURRENT_PLAYER_TEXT,
+    WINNER_TEXT,
+    MATCH_DRAW_TEXT,
+} = TEXT_CONSTANTS
 
 class Container extends React.Component {
 
@@ -15,6 +25,8 @@ class Container extends React.Component {
             playerX: 0,
             playerO: 0,
             winnerBoxArray:[],
+            info: CURRENT_PLAYER_TEXT,
+            availableBoxCounter: 9,
         }
     }
 
@@ -38,39 +50,52 @@ class Container extends React.Component {
         // })
         window.location.reload()
     }
-    checkGameOver() {
-        var { boxArray, playerX, playerO, isGameOver } = this.state
+    declareWinner(winnerBoxIndex, winnerBoxArray) {
+        const { playerX, playerO, boxArray } = this.state
         let winner = {}
+        if (boxArray[winnerBoxIndex] === X_TEXT) {
+            winner = { [PLAYER_X]: playerX + 1 }
+        } else {
+            winner = { [PLAYER_O]: playerO + 1 }
+        }
+        this.colorBox(winnerBoxArray, false)
+        this.setState({
+            isGameOver: true,
+            ...winner,
+            winnerBoxArray,
+            info: WINNER_TEXT + boxArray[winnerBoxIndex],
+        })
+    }
+    checkGameOver() {
+        var { boxArray, isGameOver, availableBoxCounter } = this.state
         let rowIndex
         for (rowIndex = 0; rowIndex < winnerBoxes.length; rowIndex++) {
             const [a, b, c] = winnerBoxes[rowIndex];
             if (!isGameOver && boxArray[a] && boxArray[a] === boxArray[b] && boxArray[a] === boxArray[c]) {
-                isGameOver = true
-                if (boxArray[a] === X_TEXT) {
-                    winner = { [PLAYER_X]: playerX + 1 }
-                } else {
-                    winner = { [PLAYER_O]: playerO + 1 }
-                }
-                break;
+                this.declareWinner(a, [a, b, c])
+                return false
+                // break;
             }
         }
-        let winnerBoxArray = winnerBoxes[rowIndex]
-        if (isGameOver && winnerBoxArray) {
-            this.colorBox(winnerBoxes[rowIndex], false)
+        // when no available box is available this snippet executes only when declareWinner() is not called
+        if (availableBoxCounter === 0) { 
+            this.setState({
+                isGameOver: true,
+                info: MATCH_DRAW_TEXT,
+            })
+            this.colorBox(winnerBoxes[0])
+            this.colorBox(winnerBoxes[1])
+            this.colorBox(winnerBoxes[2])
         }
-        this.setState({
-            isGameOver,
-            ...winner,
-            winnerBoxArray: winnerBoxArray ? winnerBoxArray : [],
-        })
     }
     boxClick(boxIndex) {
-        const boxArray = this.state.boxArray.slice()
-        const currentPlayer = this.state.currentPlayer
-            boxArray[boxIndex] = currentPlayer
+        const {boxArray, currentPlayer, availableBoxCounter } = this.state
+        const boxArrayCopy = boxArray.slice()
+        boxArrayCopy[boxIndex] = currentPlayer
         this.setState({
-            boxArray,
+            boxArray: boxArrayCopy,
             currentPlayer: currentPlayer === X_TEXT ? O_TEXT : X_TEXT,
+            availableBoxCounter: availableBoxCounter - 1,
         }, () =>
             this.checkGameOver()
         )
@@ -79,23 +104,26 @@ class Container extends React.Component {
         const { boxArray, isGameOver, winnerBoxArray } = this.state
         const grid = []
         for (let boxIndex = 0; boxIndex < 9; boxIndex++) {
-            let overridingClass = winnerBoxArray.includes(boxIndex) ? WINNER_CLASS + " " : ''
-            overridingClass += isGameOver ? DEFAULT_POINTER_CLASS + " " : ''
+            let alreadyClicked = boxArray[boxIndex] !== null
+            let dynamicClasses = []
+            dynamicClasses.push( winnerBoxArray.includes(boxIndex) ? WINNER_CLASS : '' )
+            dynamicClasses.push( isGameOver || alreadyClicked ? DEFAULT_POINTER_CLASS : '' )
             grid.push(
                 <Box
                     key={ boxIndex }
-                    overridingClass={ overridingClass }
+                    overridingClass={ dynamicClasses.join(" ") }
                     boxIndex={ boxIndex }
                     value={ boxArray[boxIndex] }
-                    onClick={ isGameOver ? null : this.boxClick.bind(this, boxIndex) }
+                    onClick={ isGameOver || alreadyClicked ? null : this.boxClick.bind(this, boxIndex) }
                 />
+                    // disabledProp={ isGameOver ? true : null }
             )
         }
         return grid
     }
 
     render() {
-        const { currentPlayer, playerX, playerO } = this.state
+        const { currentPlayer, playerX, playerO, info, isGameOver } = this.state
         return (
             <div className="row">
                 <div>
@@ -103,8 +131,11 @@ class Container extends React.Component {
                             <Scoreboard scoreX={ playerX } scoreO={ playerO } />
                     </div>
                     <div className="game-info">
-                        <span>Current Player: </span>
-                        <strong>{ currentPlayer }</strong>
+                        {
+                            isGameOver 
+                        ?   <strong>{ info }</strong>
+                        :   <strong>{ CURRENT_PLAYER_TEXT + currentPlayer }</strong>
+                        }
                         <img alt="Reload" src={reloadIcon} className="reset-icon m-l-15pcnt" onClick={this.reloadGame.bind(this)} />
                     </div>
                 </div>
