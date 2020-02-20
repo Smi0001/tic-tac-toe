@@ -34,6 +34,18 @@ export const AppActions = {
     }
   },
 
+  reloadGame: () => {
+    return {
+      type: actionType.RELOAD_GAME,
+    }
+  },
+
+  mountScoreBoard: () => {
+    return {
+      type: actionType.MOUNT_SCORE_BOARD,
+    }
+  },
+
 }
 
 export const checkGameOver = (dispatch, getState) => {
@@ -59,4 +71,15 @@ export const checkGameOver = (dispatch, getState) => {
         UTILS.colorBox(winnerBoxes[1])
         UTILS.colorBox(winnerBoxes[2])
     }
+}
+
+export const reloadGame = (dispatch, getState) => {
+    UTILS.addRemoveClass('reset-btn', 'animated', true)
+    let { winnerBoxArray } = getState().reducerState
+    UTILS.colorBox(
+        winnerBoxArray,
+        true
+    )
+    dispatch(AppActions.reloadGame())
+    UTILS.addRemoveClass('reset-btn', 'animated', false)
 }

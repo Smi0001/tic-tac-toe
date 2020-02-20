@@ -6,6 +6,8 @@ const DEFAULT_POINTER_CLASS = 'cur-def'
 const GAME_TIC_TAC_TOE = 'GAME_TIC_TAC_TOE'
 const PLAYER_X = 'playerX'
 const PLAYER_O = 'playerO'
+const SCORE_X = 'scoreX'
+const SCORE_O = 'scoreO'
 const WINNER_TEXT = 'Winner: '
 const CURRENT_PLAYER_TEXT = 'Current Player: '
 const MATCH_DRAW_TEXT = 'Match is draw!'
@@ -32,6 +34,8 @@ export const TEXT_CONSTANTS = {
     GAME_TIC_TAC_TOE,
     PLAYER_X,
     PLAYER_O,
+    SCORE_X,
+    SCORE_O,
     WINNER_TEXT,
     CURRENT_PLAYER_TEXT,
     MATCH_DRAW_TEXT,

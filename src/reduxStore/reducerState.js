@@ -12,7 +12,6 @@ const {
     PLAYER_O,
     CURRENT_PLAYER_TEXT,
     WINNER_TEXT,
-    MATCH_DRAW_TEXT,
 } = TEXT_CONSTANTS
 
 const initialState = {
@@ -24,6 +23,7 @@ const initialState = {
     info: CURRENT_PLAYER_TEXT,
     availableBoxCounter: 9,
     isGameOver: false,
+    reloadScores: null,
 }
 
 
@@ -37,6 +37,7 @@ const reducerState = (prevState = {}, action) => {
     } = prevState
 
     switch (action.type) {
+
         case actionType.BOX_CLICK:
             let {
               boxIndex,
@@ -64,22 +65,34 @@ const reducerState = (prevState = {}, action) => {
             } else {
                 winner = { [PLAYER_O]: playerO + 1 }
             }
-
             return {
                 ...prevState,
-                ...winner,
+                ...winner, // should update Scoreboard.js
                 isGameOver: true,
                 winnerBoxArray,
                 info: WINNER_TEXT + winnerPlayer,
             }
 
         case actionType.SET_GAME_OVER:
+            let { isGameOver, info } = action.payload
             return {
                 ...prevState,
-                isGameOver: true,
-                info: MATCH_DRAW_TEXT,
+                isGameOver,
+                info,
             }
 
+        case actionType.RELOAD_GAME:
+            return {
+                ...prevState,
+                ...initialState,                
+                reloadScores: true,
+            }
+
+        case actionType.MOUNT_SCORE_BOARD:
+            return {
+                ...prevState,
+                reloadScores: null,
+            }
         default:
             return {...initialState}
     }

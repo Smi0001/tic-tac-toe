@@ -1,27 +1,37 @@
+import { connect } from 'react-redux';
 import React from 'react'
 import Box from './Box'
 import { TEXT_CONSTANTS } from '../constants/constants'
 import refreshIcon from '../assets/recycle.svg'
 
-const { GAME_TIC_TAC_TOE, PLAYER_X, PLAYER_O, DEFAULT_POINTER_CLASS } = TEXT_CONSTANTS
+const {
+    GAME_TIC_TAC_TOE,
+    PLAYER_X,
+    PLAYER_O,
+    SCORE_X,
+    SCORE_O,
+    DEFAULT_POINTER_CLASS,
+} = TEXT_CONSTANTS
 const getScores = function() {
     const scoreObj = sessionStorage.getItem(GAME_TIC_TAC_TOE)
     return scoreObj
         ? JSON.parse(scoreObj)
         : {
-            [PLAYER_X]: 0,
-            [PLAYER_O]: 0,
+            [SCORE_X]: 0,
+            [SCORE_O]: 0,
         }
 }
 
 class Scoreboard extends React.Component {
+
     constructor(props) {
         super(props)
         this.state = {
-            [PLAYER_X]: 0,
-            [PLAYER_O]: 0,
+            [SCORE_X]: 0,
+            [SCORE_O]: 0,
         }
     }
+
     componentDidMount() {
         this.setScoreFromStorage()
     }
@@ -30,23 +40,25 @@ class Scoreboard extends React.Component {
         const scoreObj = getScores()
         if(scoreObj) {
             this.setState({
-                [PLAYER_X]: scoreObj[PLAYER_X],
-                [PLAYER_O]: scoreObj[PLAYER_O],
+                [SCORE_X]: scoreObj[SCORE_X],
+                [SCORE_O]: scoreObj[SCORE_O],
             })
         }
     }
-    UNSAFE_componentWillReceiveProps(nextProps) {
-        const { playerX, playerO } = nextProps && nextProps.scores
-        console.log(nextProps.scores)
+
+    resetScore() {
+        sessionStorage.clear()
+        window.location.reload()
+    }
+
+    updateScore(nextProps) {
+        const { playerX, playerO } = nextProps
         if (playerX || playerO) {
             // get score from session and set back to session
             const scoreObj = getScores()
             var localScores = {}
-            localScores[PLAYER_X] = scoreObj[PLAYER_X] + (playerX ? Number(playerX) : 0)
-            localScores[PLAYER_O] = scoreObj[PLAYER_O] + (playerO ? Number(playerO) : 0)
-            this.setState({
-                ...localScores
-            })
+            localScores[SCORE_X] = scoreObj[SCORE_X] + (playerX ? Number(playerX) : 0)
+            localScores[SCORE_O] = scoreObj[SCORE_O] + (playerO ? Number(playerO) : 0)
             const scoreStr = JSON.stringify(
                 { ...localScores }
             )
@@ -56,12 +68,10 @@ class Scoreboard extends React.Component {
             )
         }
     }
-    resetScore() {
-        sessionStorage.clear()
-        this.setScoreFromStorage()
-        window.location.reload()
-    }
+
     render() {
+        this.updateScore(this.props)
+        let { playerX, playerO } = this.props
         return (
             <div className="row">
                 <div className="game-info">
@@ -69,13 +79,20 @@ class Scoreboard extends React.Component {
                     <span className="m-l-15">Player O</span>
                 </div>
                 <div className="score-box">
-                    <Box overridingClass={ DEFAULT_POINTER_CLASS } value={ this.state[PLAYER_X] } />
-                    <Box overridingClass={ DEFAULT_POINTER_CLASS } value={ this.state[PLAYER_O] } />
-                    <img alt="Refresh" src={refreshIcon} className="reset-icon" onClick={this.resetScore.bind(this)} title="Reset Game" />
+                    <Box overridingClass={ DEFAULT_POINTER_CLASS } value={ this.state[SCORE_X] + (playerX ? Number(playerX) : 0) } />
+                    <Box overridingClass={ DEFAULT_POINTER_CLASS } value={ this.state[SCORE_O] + (playerO ? Number(playerO) : 0) } />
+                    <img alt="Refresh" src={refreshIcon} className="reset-icon" onClick={this.resetScore.bind(this)} title="Reset Score" />
                 </div>
             </div>
         )
     }
 }
 
-export default Scoreboard
+function mapStateToProps(state){
+    return {
+        [PLAYER_X]: state.reducerState[PLAYER_X],
+        [PLAYER_O]: state.reducerState[PLAYER_O],
+    };
+}
+
+export default connect(mapStateToProps, null )(Scoreboard)
