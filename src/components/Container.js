@@ -1,142 +1,108 @@
 import React from 'react'
+import { connect } from 'react-redux';
+import store from '../reduxStore'
+import { AppActions, checkGameOver, reloadGame } from '../actions';
 import Box from './Box'
 import Scoreboard from './Scoreboard'
-import { TEXT_CONSTANTS, matrix, winnerBoxes } from '../constants/constants'
+import { TEXT_CONSTANTS, UPCOMING_FEATURE } from '../constants/constants'
 import reloadIcon from '../assets/reload.svg'
+import { UTILS } from '../utils/common-utils'
 const {
-    X_TEXT,
-    O_TEXT,
     WINNER_CLASS,
-    PLAYER_X,
-    PLAYER_O,
     DEFAULT_POINTER_CLASS,
     CURRENT_PLAYER_TEXT,
-    WINNER_TEXT,
     MATCH_DRAW_TEXT,
+    UPCOMING_FEATURE_TEXT,
 } = TEXT_CONSTANTS
+
 
 class Container extends React.Component {
 
-    constructor(props) {
-        super(props)
-        this.state = {
-            boxArray: matrix.slice(),
-            currentPlayer: X_TEXT,
-            playerX: 0,
-            playerO: 0,
-            winnerBoxArray:[],
-            info: CURRENT_PLAYER_TEXT,
-            availableBoxCounter: 9,
-        }
-    }
-
-    colorBox(winnerBoxArray, isReset) {
-        for (var boxIndex = 0; boxIndex < winnerBoxArray.length; boxIndex++) {
-            var boxElement = document.getElementById( winnerBoxArray[boxIndex] )
-            isReset ? boxElement.classList.remove(WINNER_CLASS) : boxElement.classList.add(WINNER_CLASS)
-        }
-    }
     reloadGame() {
-        // commenting as this triggers Scoreboard.UNSAFE_componentWillReceiveProps() and affects score
-        // this.colorBox(
-        //     this.state.winnerBoxArray,
-        //     true
-        // )
-        // this.setState({
-        //     isGameOver: false,
-        //     currentPlayer: X_TEXT,
-        //     boxArray: matrix.slice(),
-        //     winnerBoxArray: [],
-        // })
-        window.location.reload()
-    }
-    declareWinner(winnerBoxIndex, winnerBoxArray) {
-        const { playerX, playerO, boxArray } = this.state
-        let winner = {}
-        if (boxArray[winnerBoxIndex] === X_TEXT) {
-            winner = { [PLAYER_X]: playerX + 1 }
-        } else {
-            winner = { [PLAYER_O]: playerO + 1 }
-        }
-        this.colorBox(winnerBoxArray, false)
-        this.setState({
-            isGameOver: true,
-            ...winner,
-            winnerBoxArray,
-            info: WINNER_TEXT + boxArray[winnerBoxIndex],
-        })
-    }
-    checkGameOver() {
-        var { boxArray, isGameOver, availableBoxCounter } = this.state
-        let rowIndex
-        for (rowIndex = 0; rowIndex < winnerBoxes.length; rowIndex++) {
-            const [a, b, c] = winnerBoxes[rowIndex];
-            if (!isGameOver && boxArray[a] && boxArray[a] === boxArray[b] && boxArray[a] === boxArray[c]) {
-                this.declareWinner(a, [a, b, c])
-                return false
-                // break;
+        store.dispatch(
+            (dispatch, getState) => {
+                reloadGame(dispatch, getState)
             }
-        }
-        // when no available box is available this snippet executes only when declareWinner() is not called
-        if (availableBoxCounter === 0) { 
-            this.setState({
-                isGameOver: true,
-                info: MATCH_DRAW_TEXT,
-            })
-            this.colorBox(winnerBoxes[0])
-            this.colorBox(winnerBoxes[1])
-            this.colorBox(winnerBoxes[2])
-        }
-    }
-    boxClick(boxIndex) {
-        const {boxArray, currentPlayer, availableBoxCounter } = this.state
-        const boxArrayCopy = boxArray.slice()
-        boxArrayCopy[boxIndex] = currentPlayer
-        this.setState({
-            boxArray: boxArrayCopy,
-            currentPlayer: currentPlayer === X_TEXT ? O_TEXT : X_TEXT,
-            availableBoxCounter: availableBoxCounter - 1,
-        }, () =>
-            this.checkGameOver()
         )
     }
+
+    mountScoreBoard() {
+        UTILS.delayedPromise(1).then(
+            () =>
+            store.dispatch(AppActions.mountScoreBoard())
+        )
+    }
+
+    callBoxClickFn(boxIndex) {
+        store.dispatch(
+            (dispatch, getState) => {
+                dispatch(AppActions.boxClick(boxIndex))
+                checkGameOver(dispatch, getState)
+            }
+        )
+    }
+
     renderGrid() {
-        const { boxArray, isGameOver, winnerBoxArray } = this.state
+        const { boxArray, isGameOver, winnerBoxArray, info } = this.props
         const grid = []
         for (let boxIndex = 0; boxIndex < 9; boxIndex++) {
             let alreadyClicked = boxArray[boxIndex] !== null
             let dynamicClasses = []
-            dynamicClasses.push( winnerBoxArray.includes(boxIndex) ? WINNER_CLASS : '' )
-            dynamicClasses.push( isGameOver || alreadyClicked ? DEFAULT_POINTER_CLASS : '' )
+            dynamicClasses.push(
+                info.indexOf(MATCH_DRAW_TEXT) > -1 || winnerBoxArray.includes(boxIndex)
+                ? WINNER_CLASS : '' 
+            )
+            dynamicClasses.push(
+                isGameOver || alreadyClicked
+                ? DEFAULT_POINTER_CLASS : '' 
+            )
             grid.push(
                 <Box
                     key={ boxIndex }
                     overridingClass={ dynamicClasses.join(" ") }
                     boxIndex={ boxIndex }
                     value={ boxArray[boxIndex] }
-                    onClick={ isGameOver || alreadyClicked ? null : this.boxClick.bind(this, boxIndex) }
+                    onClick={
+                        isGameOver || alreadyClicked
+                        ?
+                            null
+                        : this.callBoxClickFn.bind(this, boxIndex)
+                    }
                 />
-                    // disabledProp={ isGameOver ? true : null }
             )
         }
         return grid
     }
 
+    renderUpcomingFeatures() {
+        return (
+            <div className="upcoming-feature-div">
+                <label>{UPCOMING_FEATURE_TEXT}</label>
+                <ul className="upcoming-feature-list">
+                    {
+                        UPCOMING_FEATURE.map( (feature, index) => <li key={index}>-- {feature}</li>)
+                    }
+                </ul>
+            </div>
+        )
+    }
+
     render() {
-        const { currentPlayer, playerX, playerO, info, isGameOver } = this.state
+        const { currentPlayer, info, isGameOver, reloadScores } = this.props
         return (
             <div className="row">
+                <div>{ this.renderUpcomingFeatures() }</div>
                 <div>
                     <div className="scoreboard">
-                            <Scoreboard scoreX={ playerX } scoreO={ playerO } />
+                        {!reloadScores ? <Scoreboard /> : this.mountScoreBoard()}
                     </div>
                     <div className="game-info">
                         {
-                            isGameOver 
-                        ?   <strong>{ info }</strong>
-                        :   <strong>{ CURRENT_PLAYER_TEXT + currentPlayer }</strong>
+                            isGameOver
+                            ?   <strong>{ info }</strong>
+                            :   <strong>{ CURRENT_PLAYER_TEXT + currentPlayer }</strong>
                         }
-                        <img alt="Reload" src={reloadIcon} className="reset-icon m-l-15pcnt" onClick={this.reloadGame.bind(this)} />
+                        <img id="reset-btn" alt="Reload" src={reloadIcon} className="reset-icon m-l-15pcnt" onClick={this.reloadGame.bind(this)} title="Reset Game" />
                     </div>
                 </div>
                 <div className={"container container-3-col"}>
@@ -147,4 +113,31 @@ class Container extends React.Component {
     }
 }
 
-export default Container
+function mapStateToProps(state){
+    return {
+        boxArray: state.reducerState.boxArray,
+        currentPlayer: state.reducerState.currentPlayer,
+        availableBoxCounter: state.reducerState.availableBoxCounter,
+        winnerBoxArray: state.reducerState.winnerBoxArray,
+        info: state.reducerState.info,
+        isGameOver: state.reducerState.isGameOver,
+        playerO: state.reducerState.playerO,
+        playerX: state.reducerState.playerX,
+        reloadScores: state.reducerState.reloadScores,
+    };
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        boxClick: boxIndex => {
+            dispatch(AppActions.boxClick(boxIndex))
+        },
+        setGameOver: (isTrue, text) =>{
+            dispatch(AppActions.setGameOver(isTrue, text))
+        },
+        declareWinner: (winnerBoxIndex, winnerBoxArray) => {
+            dispatch(AppActions.declareWinner(winnerBoxIndex, winnerBoxArray))
+        },
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps )(Container)

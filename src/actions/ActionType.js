@@ -1,0 +1,5 @@
+export const BOX_CLICK = 'BOX_CLICK'
+export const DECLARE_WINNER = 'DECLARE_WINNER'
+export const SET_GAME_OVER = 'SET_GAME_OVER'
+export const RELOAD_GAME = 'RELOAD_GAME'
+export const MOUNT_SCORE_BOARD = 'MOUNT_SCORE_BOARD'

@@ -102,3 +102,46 @@
   justify-content: center;
   display: inline-block;
 }
+#reset-btn.animated {
+  animation:rotate 1s infinite;
+  animation-timing-function: cubic-bezier(1,0,.5,1);
+}
+@-webkit-keyframes rotate {
+  from { -webkit-transform: rotate(0deg) }
+  to { -webkit-transform: rotate(360deg) } 
+}
+@keyframes rotate {
+  from {
+      transform: rotate(0deg)
+  }
+  to {
+    transform: rotate(360deg)
+  } 
+}
+
+.upcoming-feature-div {
+  position: absolute;
+  border: 1px solid #88e;
+  box-shadow: -3px 2px 3px rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  right: 0;
+  top: 0;
+  margin: 5px;
+}
+.upcoming-feature-div:hover {
+  color: #282C34;
+  background-color: white;
+}
+.upcoming-feature-div label {
+  font-size: 15px;
+  font-weight: bold;
+}
+.upcoming-feature-list {
+  padding: 0;
+  margin: 2px 0;
+}
+.upcoming-feature-div li {
+  list-style-type: none;
+  padding: 0 5px;
+  text-align: left;
+}
