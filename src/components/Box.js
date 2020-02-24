@@ -1,6 +1,4 @@
 import React from 'react'
-// import { TEXT_CONSTANTS } from '../constants/constants'
-// const { DEFAULT_POINTER_CLASS } = TEXT_CONSTANTS
 
 class Box extends React.Component {
 
@@ -20,7 +18,6 @@ class Box extends React.Component {
                 className={ dynamicClasses.join(" ") }
                 onClick={this.handleClick.bind(this)}
             >
-                {/* disabled={ disabledProp ? true : null } */}
                 { value }
             </button>
         )

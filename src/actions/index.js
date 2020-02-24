@@ -64,7 +64,6 @@ export const checkGameOver = (dispatch, getState) => {
             return false
         }
     }
-    // when no available box is available this snippet executes only when callDeclareWinnerFn() is not called
     if (availableBoxCounter === 0) {
         dispatch(AppActions.setGameOver(true, TEXT_CONSTANTS.MATCH_DRAW_TEXT))
         UTILS.colorBox(winnerBoxes[0])

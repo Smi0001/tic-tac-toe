@@ -4,7 +4,7 @@ import store from '../reduxStore'
 import { AppActions, checkGameOver, reloadGame } from '../actions';
 import Box from './Box'
 import Scoreboard from './Scoreboard'
-import { TEXT_CONSTANTS } from '../constants/constants'
+import { TEXT_CONSTANTS, UPCOMING_FEATURE } from '../constants/constants'
 import reloadIcon from '../assets/reload.svg'
 import { UTILS } from '../utils/common-utils'
 const {
@@ -12,14 +12,11 @@ const {
     DEFAULT_POINTER_CLASS,
     CURRENT_PLAYER_TEXT,
     MATCH_DRAW_TEXT,
+    UPCOMING_FEATURE_TEXT,
 } = TEXT_CONSTANTS
 
 
 class Container extends React.Component {
-  
-    componentDidMount() {
-        // this.unsubscribeStore = store.subscribe(this.updateStateFromStore);
-    }
 
     reloadGame() {
         store.dispatch(
@@ -77,10 +74,24 @@ class Container extends React.Component {
         return grid
     }
 
+    renderUpcomingFeatures() {
+        return (
+            <div className="upcoming-feature-div">
+                <label>{UPCOMING_FEATURE_TEXT}</label>
+                <ul className="upcoming-feature-list">
+                    {
+                        UPCOMING_FEATURE.map( (feature, index) => <li key={index}>-- {feature}</li>)
+                    }
+                </ul>
+            </div>
+        )
+    }
+
     render() {
         const { currentPlayer, info, isGameOver, reloadScores } = this.props
         return (
             <div className="row">
+                <div>{ this.renderUpcomingFeatures() }</div>
                 <div>
                     <div className="scoreboard">
                         {!reloadScores ? <Scoreboard /> : this.mountScoreBoard()}
@@ -127,9 +138,6 @@ const mapDispatchToProps = dispatch => {
         declareWinner: (winnerBoxIndex, winnerBoxArray) => {
             dispatch(AppActions.declareWinner(winnerBoxIndex, winnerBoxArray))
         },
-        // checkGameOver: (newState) => {
-        //     dispatch(AppActions.checkGameOver(newState))
-        // },
     }
 }
 export default connect(mapStateToProps, mapDispatchToProps )(Container)

@@ -11,6 +11,7 @@ const SCORE_O = 'scoreO'
 const WINNER_TEXT = 'Winner: '
 const CURRENT_PLAYER_TEXT = 'Current Player: '
 const MATCH_DRAW_TEXT = 'Match is draw!'
+const UPCOMING_FEATURE_TEXT = 'Coming Soon'
 export const matrix = [
     null, null, null,
     null, null, null,
@@ -39,4 +40,12 @@ export const TEXT_CONSTANTS = {
     WINNER_TEXT,
     CURRENT_PLAYER_TEXT,
     MATCH_DRAW_TEXT,
+    UPCOMING_FEATURE_TEXT,
 }
+export const UPCOMING_FEATURE = [
+    'Play Against CPU',
+    'Share your score on social platforms',
+    'Social platform Login',
+    'Play with social platform friends',
+    'Mobile App would be available soon',
+]
